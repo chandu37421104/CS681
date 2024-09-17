@@ -37,18 +37,18 @@ public class FileCrawlingVisitor implements FSVisitor {
         }
     }
 
-    public Stream<FSElement> getElementsStream() {
+    public Stream<FSElement> FileStream() {
         return elements.stream();
     }
 
     public List<String> getVisitedPaths() {
-        return getElementsStream()
+        return FileStream()
                .map(element -> "Visiting " + (element instanceof File ? "file: " : element instanceof Directory ? "directory: " : "link: ") + element.getName())
                .collect(Collectors.toList());
     }
 
     public Map<String, Long> countFilesByType() {
-        return getElementsStream()
+        return FileStream()
                .filter(e -> e instanceof File)
                .map(e -> (File)e)
                .collect(Collectors.groupingBy(

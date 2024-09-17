@@ -60,7 +60,7 @@ public class FileSystemTest {
         FileCrawlingVisitor crawlVisitor = new FileCrawlingVisitor();
         TestFixture.repo.accept(crawlVisitor);
 
-        long javaFileCount = crawlVisitor.getElementsStream()
+        long javaFileCount = crawlVisitor.FileStream()
                                   .filter(e -> e instanceof File)
                                   .map(e -> (File) e)
                                   .distinct()
@@ -77,7 +77,7 @@ public class FileSystemTest {
         FileCrawlingVisitor crawlVisitor = new FileCrawlingVisitor();
         TestFixture.repo.accept(crawlVisitor);
 
-        long javaFileCount = crawlVisitor.getElementsStream()
+        long javaFileCount = crawlVisitor.FileStream()
                                   .filter(e -> e instanceof File)
                                   .map(e -> (File) e)
                                   .distinct()
