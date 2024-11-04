@@ -4,6 +4,8 @@ import umbcs681.hw01.util.*;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
+
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -126,5 +128,54 @@ public class FileSystemTest {
         TestFixture.repo.accept(searchVisitor);
 
         assertEquals(0, searchVisitor.getFoundFiles().size(), "No files should be found for a non-existent file.");
+    }
+
+    @Test
+    void javaFilesCreatedAfterCertainTimeTest() {
+        FileCrawlingVisitor crawlVisitor = new FileCrawlingVisitor();
+        TestFixture.repo.accept(crawlVisitor);
+
+        
+        LocalDateTime filterTime = LocalDateTime.now().minusMinutes(1);
+
+        
+        long count = crawlVisitor.files()
+            .filter(file -> file.getCreationTime().isAfter(filterTime))
+            .filter(file -> file.getName().endsWith(".java"))
+            .count();
+
+        int expectedCount = 4; 
+        assertEquals(expectedCount, count, "Should find 4 .java files created after the specified time.");
+    }
+
+    @Test
+    void countJavaFilesOnlyTest() {
+        FileCrawlingVisitor crawlVisitor = new FileCrawlingVisitor();
+        TestFixture.repo.accept(crawlVisitor);
+
+        // Count files with a .java extension only
+        long javaFileCount = crawlVisitor.files()
+            .filter(file -> file.getName().endsWith(".java"))
+            .count();
+
+        int expectedJavaFileCount = 4; 
+        assertEquals(expectedJavaFileCount, javaFileCount, "Should find 4 files with .java extension.");
+    }
+
+    @Test
+    void countFilesCreatedAfterCertainTimeTest() {
+        FileCrawlingVisitor crawlVisitor = new FileCrawlingVisitor();
+        TestFixture.repo.accept(crawlVisitor);
+
+        
+        LocalDateTime filterTime = LocalDateTime.now().minusMinutes(1);
+
+        
+        long fileCountAfterTime = crawlVisitor.files()
+            .filter(file -> file.getCreationTime().isAfter(filterTime))
+            .count();
+
+        int expectedFileCountAfterTime = 5; 
+        assertEquals(expectedFileCountAfterTime, fileCountAfterTime, "Should find 5 files created after the specified time.");
     }
 }

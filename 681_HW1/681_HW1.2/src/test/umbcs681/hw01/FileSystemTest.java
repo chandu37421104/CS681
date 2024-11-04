@@ -12,6 +12,9 @@ import java.util.stream.Stream;
 
 
 public class FileSystemTest {
+
+    private static Map<String, IntSummaryStatistics> statsByExtension;
+
     @BeforeAll
     public static void setup() {
         TestFixture.setupFixture();
@@ -141,7 +144,7 @@ public class FileSystemTest {
         IntSummaryStatistics javaStats = fileStats.get("java");
         
         assertEquals(4, javaStats.getCount(), "There should be 4 .java files.");
-        assertTrue(javaStats.getSum() > 0, "Total size of .java files should be greater than 0.");
+        assertEquals(120 + 80 + 140 + 60, javaStats.getSum(), "The sum of .java file sizes should be correct");
     }
 
     @Test
@@ -154,6 +157,6 @@ public class FileSystemTest {
         IntSummaryStatistics mdStats = fileStats.get("md");
 
         assertEquals(1, mdStats.getCount(), "There should be 2 .txt files.");
-        assertTrue(mdStats.getSum() > 0, "Total size of .txt files should be greater than 0.");
+        assertEquals(20, mdStats.getSum(), "The sum of .md file sizes should be 20");
     }
 }

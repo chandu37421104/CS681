@@ -2,11 +2,13 @@ package umbcs681.hw01.util;
 
 import umbcs681.hw01.fs.*;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Stream;
+import java.time.LocalDateTime;
 
 public class FileCrawlingVisitor implements FSVisitor {
     private List<String> visitedPaths = new ArrayList<>();
@@ -51,5 +53,12 @@ public class FileCrawlingVisitor implements FSVisitor {
 
     public Stream<File> files() {
         return files.stream();
+    }
+
+    public long countJavaFilesAfter(LocalDateTime date) {
+        return files()
+            .filter(file -> file.getName().endsWith(".java")) // Check for .java extension
+            .filter(file -> file.getCreationTime().isAfter(date)) // Check creation date
+            .count();
     }
 }

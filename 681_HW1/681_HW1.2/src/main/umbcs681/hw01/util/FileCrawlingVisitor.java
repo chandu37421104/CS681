@@ -2,6 +2,7 @@ package umbcs681.hw01.util;
 
 import umbcs681.hw01.fs.*;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.IntSummaryStatistics;
@@ -56,11 +57,18 @@ public class FileCrawlingVisitor implements FSVisitor {
         return files.stream();
     }
 
+    public long countJavaFilesAfter(LocalDateTime date) {
+        return files()
+            .filter(file -> file.getName().endsWith(".java")) // Check for .java extension
+            .filter(file -> file.getCreationTime().isAfter(date)) // Check creation date
+            .count();
+    }
+
     public Map<String, IntSummaryStatistics> groupFilesByExtension() {
-        return files.stream()
+        return files()
             .collect(Collectors.groupingBy(
                 file -> getFileExtension(file.getName()), 
-                Collectors.summarizingInt(File::getSize) 
+                Collectors.summarizingInt(File::getSize)
             ));
     }
 
