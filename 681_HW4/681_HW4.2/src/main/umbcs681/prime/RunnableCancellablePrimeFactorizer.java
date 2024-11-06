@@ -1,5 +1,6 @@
 package umbcs681.prime;
 
+import java.util.LinkedList;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class RunnableCancellablePrimeFactorizer extends RunnablePrimeFactorizer {
@@ -56,16 +57,44 @@ public class RunnableCancellablePrimeFactorizer extends RunnablePrimeFactorizer 
     }
 
     public static void main(String[] args) {
-		// Currently the PrimeFactorizer is set to provide prime factors of 84
-		RunnableCancellablePrimeFactorizer gen = new RunnableCancellablePrimeFactorizer(84, 2, (long)Math.sqrt(84));
-		Thread thread = new Thread(gen);
-		thread.start();
-		try {
-			thread.join();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-		gen.getPrimeFactors().forEach( (Long factor)-> System.out.print(factor + ", ") );
-		System.out.println("\n" + gen.getPrimeFactors().size() + " prime factors are found.");
-	}
+        // Factorization of 84 with two threads, demonstrating cancellable functionality
+        System.out.println("Factorization of 84 with cancellable threads");
+
+       
+        long numberToFactorize = 84;
+        RunnableCancellablePrimeFactorizer factorizer1 = new RunnableCancellablePrimeFactorizer(numberToFactorize, 2, (long) Math.sqrt(numberToFactorize) / 2);
+        RunnableCancellablePrimeFactorizer factorizer2 = new RunnableCancellablePrimeFactorizer(numberToFactorize, 1 + (long) Math.sqrt(numberToFactorize) / 2, (long) Math.sqrt(numberToFactorize));
+
+        
+        Thread thread1 = new Thread(factorizer1);
+        Thread thread2 = new Thread(factorizer2);
+
+        // Start both threads
+        thread1.start();
+        thread2.start();
+
+        
+        try {
+            Thread.sleep(50); 
+            factorizer1.setDone(); 
+            System.out.println("Requested cancellation of Thread #" + thread1.getId());
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        
+        try {
+            thread1.join();
+            thread2.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        
+        LinkedList<Long> factors = new LinkedList<>();
+        factors.addAll(factorizer1.getPrimeFactors());
+        factors.addAll(factorizer2.getPrimeFactors());
+
+        System.out.println("Prime factors of " + numberToFactorize + ": " + factors);
+    }
 }

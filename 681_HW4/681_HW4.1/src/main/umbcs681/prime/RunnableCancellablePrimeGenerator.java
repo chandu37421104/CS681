@@ -44,17 +44,34 @@ public class RunnableCancellablePrimeGenerator extends RunnablePrimeGenerator {
     }
 
     public static void main(String[] args) {
-        RunnableCancellablePrimeGenerator gen = new RunnableCancellablePrimeGenerator(1, 100);
-        Thread thread = new Thread(gen);
+        // Define a range for generating prime numbers
+        RunnableCancellablePrimeGenerator generator = new RunnableCancellablePrimeGenerator(1, 100000);
+
+        // Start the generator in a separate thread
+        Thread thread = new Thread(generator);
         thread.start();
-        gen.setDone();
+
+        // Let the generator run for a short period before canceling
+        try {
+            Thread.sleep(100); // Run for 100 milliseconds
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        // Cancel the prime generation
+        generator.setDone();
+
+        // Wait for the thread to finish
         try {
             thread.join();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        gen.getPrimes().forEach((Long prime) -> System.out.print(prime + ", "));
-        System.out.println("\n" + gen.getPrimes().size() + " prime numbers are found.");
+
+        // Output the results
+        System.out.println("Prime numbers generated:");
+        generator.getPrimes().forEach((Long prime) -> System.out.print(prime + ", "));
+        System.out.println("\nTotal primes generated: " + generator.getPrimes().size());
     }
 }
 
