@@ -56,16 +56,21 @@ public class RunnableCancellablePrimeFactorizer extends RunnablePrimeFactorizer 
     }
 
     public static void main(String[] args) {
-		// Currently the PrimeFactorizer is set to provide prime factors of 84
-		RunnableCancellablePrimeFactorizer gen = new RunnableCancellablePrimeFactorizer(84, 2, (long)Math.sqrt(84));
-		Thread thread = new Thread(gen);
-		thread.start();
-		try {
-			thread.join();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-		gen.getPrimeFactors().forEach( (Long factor)-> System.out.print(factor + ", ") );
-		System.out.println("\n" + gen.getPrimeFactors().size() + " prime factors are found.");
-	}
+        // Create a prime factorizer for the number 84 within a specific range
+        RunnableCancellablePrimeFactorizer gen = new RunnableCancellablePrimeFactorizer(84, 2, (long) Math.sqrt(84));
+        Thread thread = new Thread(gen);
+        thread.start();
+    
+        try {
+            // Wait for the thread to complete
+            thread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    
+        // Output the prime factors found
+        gen.getPrimeFactors().forEach((Long factor) -> System.out.print(factor + ", "));
+        System.out.println("\n" + gen.getPrimeFactors().size() + " prime factors are found.");
+    }
+    
 }

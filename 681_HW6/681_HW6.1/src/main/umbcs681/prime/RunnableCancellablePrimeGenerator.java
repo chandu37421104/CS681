@@ -26,5 +26,23 @@ public class RunnableCancellablePrimeGenerator extends RunnablePrimeGenerator {
             }
         }
     }
+
+    public static void main(String[] args) {
+        // Create a prime generator to find primes between 1 and 100
+        RunnableCancellablePrimeGenerator gen = new RunnableCancellablePrimeGenerator(1, 100);
+        Thread thread = new Thread(gen);
+        thread.start();
+    
+        try {
+            // Wait for the thread to complete
+            thread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    
+        // Output the primes found
+        gen.getPrimes().forEach((Long prime) -> System.out.print(prime + ", "));
+        System.out.println("\n" + gen.getPrimes().size() + " primes are found.");
+    }
 }
 
