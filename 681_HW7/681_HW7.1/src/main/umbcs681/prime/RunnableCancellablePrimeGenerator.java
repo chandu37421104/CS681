@@ -1,6 +1,5 @@
 package umbcs681.prime;
 
-import java.util.concurrent.locks.ReentrantLock;
 
 public class RunnableCancellablePrimeGenerator extends RunnablePrimeGenerator {
     private volatile boolean done = false;
@@ -9,23 +8,29 @@ public class RunnableCancellablePrimeGenerator extends RunnablePrimeGenerator {
         super(from, to);
     }
 
-    // Step 1: Set the flag to stop the thread
+    
     public void setDone() {
         done = true;
     }
 
-    // Step 2: Check the flag and stop processing if set
+    
     public void generatePrimes() {
         for (long n = from; n <= to; n++) {
             if (done) {
                 System.out.println("Thread termination initiated: Cleaning up resources.");
-                this.primes.clear(); // Clean up resources if necessary
+                this.primes.clear(); 
                 System.out.println("Prime generation stopped.");
                 break;
             }
 
             if (isPrime(n)) {
                 this.primes.add(n);
+            }
+
+            
+            if (Thread.currentThread().isInterrupted()) {
+                System.out.println("Thread was interrupted during prime generation.");
+                break;
             }
         }
     }
@@ -37,26 +42,26 @@ public class RunnableCancellablePrimeGenerator extends RunnablePrimeGenerator {
         thread.start();
     
         try {
-            
-            Thread.sleep(100); // Pause for a short time (e.g., 100 ms)
+            // Pause for a short time (e.g., 100 ms)
+            Thread.sleep(100);
             
             // Step 1: Signal termination by setting done
             gen.setDone();
             
-            // Step 2: Interrupt the thread
+            // Step 2: Interrupt the thread to wake it if waiting or blocked
             thread.interrupt();
             
-            // Wait for the thread to join
+            // Wait for the thread to finish
             thread.join();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
     
-        // Output the primes found
+      
         gen.getPrimes().forEach((Long prime) -> System.out.print(prime + ", "));
         System.out.println("\n" + gen.getPrimes().size() + " primes are found.");
     }
-    
 }
+
 
 

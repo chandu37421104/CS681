@@ -1,15 +1,19 @@
 package umbcs681.prime;
 
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class RunnableCancellablePrimeGenerator extends RunnablePrimeGenerator {
     private boolean done = false;
     private final ReentrantLock lock = new ReentrantLock();
-    
+
     public RunnableCancellablePrimeGenerator(long from, long to) {
         super(from, to);
+        this.primes = new LinkedList<>();
     }
-    
+
     public void setDone() {
         lock.lock();
         try {
@@ -25,7 +29,7 @@ public class RunnableCancellablePrimeGenerator extends RunnablePrimeGenerator {
             try {
                 if (done) {
                     System.out.println("Stopped generating prime numbers.");
-                    this.primes.clear();
+                    this.primes.clear(); 
                     break;
                 }
             } finally {
@@ -35,7 +39,9 @@ public class RunnableCancellablePrimeGenerator extends RunnablePrimeGenerator {
             if (isPrime(n)) {
                 lock.lock();
                 try {
-                    this.primes.add(n);
+                    if (!done) { 
+                        this.primes.add(n);
+                    }
                 } finally {
                     lock.unlock();
                 }
@@ -47,21 +53,21 @@ public class RunnableCancellablePrimeGenerator extends RunnablePrimeGenerator {
         // Define a range for generating prime numbers
         RunnableCancellablePrimeGenerator generator = new RunnableCancellablePrimeGenerator(1, 100000);
 
-        // Start the generator in a separate thread
+        
         Thread thread = new Thread(generator);
         thread.start();
 
-        // Let the generator run for a short period before canceling
+        
         try {
-            Thread.sleep(100); // Run for 100 milliseconds
+            Thread.sleep(100); 
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
 
-        // Cancel the prime generation
+       
         generator.setDone();
 
-        // Wait for the thread to finish
+        
         try {
             thread.join();
         } catch (InterruptedException e) {
@@ -74,4 +80,3 @@ public class RunnableCancellablePrimeGenerator extends RunnablePrimeGenerator {
         System.out.println("\nTotal primes generated: " + generator.getPrimes().size());
     }
 }
-
