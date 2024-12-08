@@ -1,0 +1,33 @@
+<project name="prime-junit" basedir="."  default="clean" xmlns:ivy="antlib:org.apache.ivy.ant">
+    <property name="src" location="src/main" />
+    <property name="bin" location="build/main" />
+    <property name="ivy.lib" location="lib"/>
+
+    <target name="download"
+            description="--> Download JAR files (listed in ivy.xml) to the 'lib' directory.">
+        <mkdir dir="${ivy.lib}"/>
+        <ivy:retrieve/>
+    </target>
+
+    <target name="init" depends="download">
+        <mkdir dir="${bin}"/>
+        <path id="classpath">
+            <pathelement location="${bin}" />
+            <fileset dir="${ivy.lib}"/>
+        </path>
+        <echo message="CLASSPATH: ${toString:classpath}" />
+    </target>
+    
+    <target name="compile" depends="init">
+        <javac srcdir="${src}" destdir="${bin}" includeAntRuntime="no">
+            <classpath refid="classpath"/>
+            <include name="umbcs681/bankAccount/*.java"/>
+        </javac>
+    </target>
+
+    <target name="clean" depends="compile">
+        <delete includeemptydirs="true">
+            <fileset dir="${bin}/umbcs681/bankAccount" includes="**/*"/>
+        </delete>
+    </target>
+</project>
