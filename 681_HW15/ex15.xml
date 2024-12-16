@@ -1,0 +1,57 @@
+<!--  To run this build script, type: 
+
+      ant -f ex3.xml
+
+      on a shell. 
+-->
+<project name="filesystems-hw12" basedir="." default="run" xmlns:ivy="antlib:org.apache.ivy.ant">
+    <!-- Properties -->
+    <property name="src" location="src/main" />
+    <property name="bin" location="build/main" />
+    <property name="ivy.lib" location="lib" />
+
+    <!-- Download Dependencies -->
+    <target name="download" description="--> Download JAR files (listed in ivy.xml) to the 'lib' directory.">
+        <mkdir dir="${ivy.lib}" />
+        <ivy:retrieve />
+    </target>
+
+    <!-- Initialize Build Directories -->
+    <target name="init" depends="download">
+        <mkdir dir="${bin}" />
+        <path id="classpath">
+            <pathelement location="${bin}" />
+            <fileset dir="${ivy.lib}" includes="**/*.jar" />
+        </path>
+        <echo message="CLASSPATH: ${toString:classpath}" />
+    </target>
+
+    <!-- Compile Source Code -->
+    <target name="compile" depends="init">
+        <javac srcdir="${src}" destdir="${bin}" includeAntRuntime="no">
+            <classpath refid="classpath" />
+            <include name="umbcs681/filesystems/fs/*.java" />
+            <include name="umbcs681/filesystems/util/*.java" />
+            <include name="umbcs681/filesystems/fs/Main.java" />
+        </javac>
+        <echo message="Compilation Complete!" />
+    </target>
+
+    <!-- Run Main Class -->
+    <target name="run" depends="compile">
+        <java classname="umbcs681.filesystems.fs.Main" fork="true">
+            <classpath>
+                <pathelement location="${bin}" />
+                <fileset dir="${ivy.lib}" includes="**/*.jar" />
+            </classpath>
+        </java>
+    </target>
+
+    <!-- Clean Build Directories -->
+    <target name="clean">
+        <delete includeemptydirs="true">
+            <fileset dir="${bin}" includes="**/*" />
+        </delete>
+        <echo message="Clean Complete!" />
+    </target>
+</project>
